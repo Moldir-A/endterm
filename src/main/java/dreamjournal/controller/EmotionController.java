@@ -15,7 +15,7 @@ import java.util.List;
 public class EmotionController {
 
     @Autowired
-    private DreamService dreamService; // Или отдельный EmotionService, если создадите
+    private DreamService dreamService; 
 
     @GetMapping
     public List<Emotion> getAllEmotions() throws SQLException {
