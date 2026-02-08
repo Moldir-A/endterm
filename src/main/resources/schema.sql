@@ -9,12 +9,12 @@ CREATE TABLE emotions (
 
 CREATE TABLE dreams (
                         id SERIAL PRIMARY KEY,
-                        type VARCHAR(20) NOT NULL,        -- Тип сна (LUCID или NIGHTMARE)
+                        type VARCHAR(20) NOT NULL,       
                         title VARCHAR(255) NOT NULL,
                         description TEXT,
                         intensity INTEGER CHECK (intensity >= 1 AND intensity <= 10),
                         dream_date DATE NOT NULL,
-                        extra_param BOOLEAN DEFAULT FALSE -- Для user_controlled или recurring
+                        extra_param BOOLEAN DEFAULT FALSE 
 );
 CREATE TABLE IF NOT EXISTS emotions (
                                         id SERIAL PRIMARY KEY,
