@@ -54,4 +54,7 @@ public abstract class DreamEntry {
 
     public LocalDate getDreamDate() { return dreamDate; }
     public void setDreamDate(LocalDate dreamDate) { this.dreamDate = dreamDate; }
+
+    public void setType(String type) {
+    }
 }
