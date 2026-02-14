@@ -57,4 +57,7 @@ public abstract class DreamEntry {
 
     public void setType(String type) {
     }
+
+    public String getType() {
+    }
 }

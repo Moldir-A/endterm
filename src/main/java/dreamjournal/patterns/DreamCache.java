@@ -1,12 +1,15 @@
 package dreamjournal.patterns;
 
-import dreamjournal.model.DreamEntry;
+import dreamjournal.dto.DreamDTO;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DreamCache {
     private static DreamCache instance;
-    private List<DreamEntry> cachedDreams;
+
+    private final Map<String, List<DreamDTO>> cache = new ConcurrentHashMap<>();
+
     private DreamCache() {}
 
     public static synchronized DreamCache getInstance() {
@@ -16,15 +19,16 @@ public class DreamCache {
         return instance;
     }
 
-    public Optional<List<DreamEntry>> getDreams() {
-        return Optional.ofNullable(cachedDreams);
+    public void put(String key, List<DreamDTO> data) {
+        cache.put(key, data);
     }
 
-    public void setDreams(List<DreamEntry> dreams) {
-        this.cachedDreams = dreams;
+    public List<DreamDTO> get(String key) {
+        return cache.get(key);
     }
 
-    public void clear() {
-        this.cachedDreams = null;
+    public void invalidate() {
+        cache.clear();
+        System.out.println("Cache invalidated after update/delete operation.");
     }
 }
