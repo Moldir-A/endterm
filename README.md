@@ -1,55 +1,25 @@
-Dream Journal REST API
-A. Project Overview
-This project is a Spring Boot RESTful API designed for a digital dream journal. It allows users to log, categorize, and analyze different types of dreams (Lucid Dreams and Nightmares) while tracking emotional states. The system demonstrates advanced backend architecture by integrating Design Patterns, SOLID principles, and Component Principles.
+Bonus Task Implementation: Caching Layer
+This document describes the implementation of the In-Memory Caching mechanism added to the Dream Journal API to optimize performance and demonstrate advanced design patterns.
 
-B. REST API Documentation
-The API provides full CRUD functionality for dream entries and emotion management.
+Objective
+The goal was to enhance application performance by storing frequently accessed data (all dreams) in memory, reducing the number of direct queries to the PostgreSQL database.
 
-Endpoints
-Method	Endpoint	Description
-GET	/api/dreams
-Retrieve all dream entries
-
-POST	/api/dreams
-Create a new dream (Lucid or Nightmare)
-
-PUT	/api/dreams/{id}
-Update an existing dream entry
-
-DELETE	/api/dreams/{id}
-Remove a dream from the database
-
-GET	/api/emotions	List all tracked emotions
-Sample JSON Request (POST /api/dreams)
-JSON
-{
-"type": "LUCID",
-"title": "Ocean Flight",
-"description": "Flying over a digital ocean with high control.",
-"intensity": 9,
-"date": "2026-02-14",
-"extraParam": true
-}
-C. Design Patterns
-Singleton: Implemented in DatabaseConnection to ensure a single, shared connection pool across the application.
-Factory: The DreamFactory handles the instantiation of LucidDream vs Nightmare objects based on the input type.
-Builder: DreamBuilder is used within the factory to construct complex dream objects with fluent method calls.
-D. Component Principles
-REP (Reuse/Release Equivalence): Common logic is separated into patterns and utils packages for high reusability.
-CCP (Common Closure): Related logic (e.g., Dream models and DTOs) is grouped together so changes in dream logic are contained.
-CRP (Common Reuse): The package structure ensures that the controller layer only depends on the service layer, avoiding unnecessary dependencies.
-E. SOLID & OOP Summary
-S (Single Responsibility): Controllers handle HTTP, Services handle logic, and Repositories handle Data.
-O (Open/Closed): New dream types can be added via the DreamFactory without modifying existing service code.
-L (Liskov Substitution): LucidDream and Nightmare seamlessly substitute the DreamEntry base class.
-Advanced OOP: Utilizes abstract classes and inheritance for dream categorization.
-F. Database Schema
-
-The system uses a relational PostgreSQL database  with two primary tables:
-dreams: Stores ID, type, title, description, intensity, date, and extra parameters.
-emotions: Stores unique emotion tags.
-G. Instructions to Run
-Database: Create a PostgreSQL database named mold.
-Schema: Execute the provided schema.sql to initialize tables.
-Configure: Update credentials in DatabaseConnection.java.
-Launch: Run Application.java as a Spring Boot application.
+Technical Features
+1. Singleton Design Pattern
+   The DreamCache class is implemented using the Singleton pattern to ensure that only one instance of the cache exists throughout the application lifecycle.
+   It uses a private constructor and a getInstance() method to control access.
+2. In-Memory Storage
+   The cache uses a Map structure (ConcurrentHashMap) to store and retrieve data efficiently in the application's RAM.
+   This ensures that repeated calls to getAllDreams() return data instantly without hitting the database.
+3. Cache Invalidation Mechanism
+   To prevent serving "stale" or outdated data, an Automatic Invalidation mechanism was implemented:
+   Automatic Clear: Whenever a dream is added, updated, or deleted, the system calls invalidate().
+   Data Integrity: This ensures the cache is always synchronized with the PostgreSQL database.
+Architectural Integration
+   Layered Integrity: The caching logic is encapsulated within the Service Layer, ensuring that the Controller and Repository layers remain unaffected.
+   SOLID Principles: The implementation follows the Single Responsibility Principle, where DreamCache is solely responsible for data persistence in memory.
+ How to Verify
+   Initial Load: Send a GET request to /api/dreams. The application fetches data from the DB and populates the cache.
+   Performance Boost: Send the same GET request again. Data is returned from the DreamCache (check the IDE console for "Returning cached data" log).
+   Invalidation Test: Send a POST request to add a new dream. The cache is cleared automatically.
+   Refresh: The next GET request will query the DB again to get the fresh list.
